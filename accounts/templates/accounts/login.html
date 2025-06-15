@@ -1,0 +1,42 @@
+
+{% extends './base.html' %}
+{% load static tailwind_tags %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl w-full flex bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="w-full md:w-1/2 p-8">
+            <div class="max-w-md w-full space-y-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 text-center">Connexion</h2>
+                    {% if error %}
+                    <div class="mt-2 text-center text-red-600">{{error}}</div>
+                    {% endif %}
+                </div>
+                <form class="mt-8 space-y-6" method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="rounded-md shadow-sm space-y-4">
+                        <div>
+                            <input type="text" name="username" required class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Email">
+                        </div>
+                        <div>
+                            <input type="password" name="password" required class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Mot de passe">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <a href="{% url 'password_reset' %}" class="text-sm font-medium text-blue-600 hover:text-blue-500">Mot de passe oublié ?</a>
+                        <a href="{% url 'register' %}" class="text-sm font-medium text-blue-600 hover:text-blue-500">Créer un compte</a>
+                    </div>
+
+                    <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        Se Connecter
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="hidden md:block w-1/2">
+            <img class="object-cover w-full h-full" src="{% static 'img/3afb3c491fbec34c7419f1264faf414b.jpg' %}" alt="Login image">
+        </div>
+    </div>
+</div>
+{% endblock %}

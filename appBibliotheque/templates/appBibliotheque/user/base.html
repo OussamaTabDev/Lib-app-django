@@ -1,0 +1,235 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bibliothèque{% endblock %}</title>
+    {% tailwind_css %}
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Alpine.js -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    {% if messages %}
+    <div class="fixed top-4 right-4 z-50 w-96">
+        {% for message in messages %}
+        <div class="p-4 mb-4 rounded-lg shadow-md {% if message.tags == 'success' %}bg-green-100 text-green-800 border-l-4 border-green-500{% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-800 border-l-4 border-yellow-400{% elif message.tags == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% endif %} transform transition-all duration-500 hover:scale-105">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <header class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white shadow-lg">
+    <div class="backdrop-blur-sm"></div>
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+            <a href="{% url 'home' %}" class="text-2xl font-bold">Bibliothèque</a>
+            
+            <!-- Desktop Navigation -->
+            <ul class="hidden md:flex space-x-8">
+                <a href="{% url 'home' %}" class="{% if request.path == '/' or 'genre' in request.path %}text-yellow-300 font-medium{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">
+                    <li>Accueil</li>
+                </a>
+                
+                {% if user.is_authenticated %}
+                    {% if user.est_bibliothecaire %}
+                        <a href="{% url 'liste_livres' %}" class="text-white hover:text-yellow-200 transition-colors">
+                            <li>Livres</li>
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'profile' %}" class="{% if request.path == '/profile/' %}text-yellow-300 font-medium{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">
+                        <li>Profile</li>
+                    </a>
+                {% endif %}
+                
+                <a href="{% url 'about' %}" class="{% if request.path == '/about/' %}text-yellow-300 font-medium{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">
+                    <li>À propos</li>
+                </a>
+                
+                <a href="{% url 'contact' %}" class="{% if request.path == '/contact/' %}text-yellow-300 font-medium{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">
+                    <li>Contact</li>
+                </a>
+            </ul>
+            
+            <!-- User Authentication Links -->
+            <div class="hidden md:flex items-center space-x-4">
+                {% if user.is_authenticated %}
+                    {% include 'appBibliotheque/user/layout/notifications.html' %}
+                {% endif %}
+                <ul class="flex items-center space-x-4">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout_user' %}" class="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                        <li>Déconnexion <i class="fa-solid fa-right-to-bracket ml-2"></i></li>
+                    </a>
+                {% else %}
+                    <a href="{% url 'pagelogin' %}" class="px-4 py-2 text-white hover:text-yellow-200 transition-colors">
+                        <li>Connexion</li>
+                    </a>
+                    
+                    <a href="{% url 'register' %}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                        <li>Inscription</li>
+                    </a>
+                {% endif %}
+            </ul>
+            
+            <!-- Mobile menu button -->
+            <div class="md:hidden">
+                <button type="button" id="mobile-menu-button" class="text-white">
+                    <i class="fa-solid fa-xl fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-4 space-y-1">
+                <a href="{% url 'home' %}" class="block px-3 py-2 rounded-md text-base font-medium {% if request.path == '/' or 'genre' in request.path %}bg-indigo-800 text-white{% else %}text-gray-200 hover:bg-indigo-800 hover:text-white{% endif %}">
+                    Accueil
+                </a>
+                
+                {% if user.is_authenticated %}
+                    {% if user.est_bibliothecaire %}
+                        <a href="{% url 'liste_livres' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-200 hover:bg-indigo-800 hover:text-white">
+                            Livres
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'profile' %}" class="block px-3 py-2 rounded-md text-base font-medium {% if request.path == '/profile/' %}bg-indigo-800 text-white{% else %}text-gray-200 hover:bg-indigo-800 hover:text-white{% endif %}">
+                        Profile
+                    </a>
+                {% endif %}
+                
+                <a href="{% url 'about' %}" class="block px-3 py-2 rounded-md text-base font-medium {% if request.path == '/about/' %}bg-indigo-800 text-white{% else %}text-gray-200 hover:bg-indigo-800 hover:text-white{% endif %}">
+                    À propos
+                </a>
+                
+                <a href="{% url 'contact' %}" class="block px-3 py-2 rounded-md text-base font-medium {% if request.path == '/contact/' %}bg-indigo-800 text-white{% else %}text-gray-200 hover:bg-indigo-800 hover:text-white{% endif %}">
+                    Contact
+                </a>
+                
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout_user' %}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-red-600 hover:bg-red-700 mt-4">
+                        Déconnexion <i class="fa-solid fa-right-to-bracket ml-2"></i>
+                    </a>
+                {% else %}
+                    <a href="{% url 'pagelogin' %}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-200 hover:bg-indigo-800 hover:text-white mt-4">
+                        Connexion
+                    </a>
+                    
+                    <a href="{% url 'register' %}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 mt-2">
+                        Inscription
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    });
+</script>
+    
+    <main>
+        {% block content %}{% endblock %}
+        {% block content2 %}{% endblock %}
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-10 mt-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <!-- About Section -->
+              <div>
+                  <h3 class="text-xl font-semibold mb-4">Bibliothèque</h3>
+                  <p class="text-gray-300">
+                      Un endroit où vous pouvez explorer, emprunter et profiter d'une vaste collection de livres.
+                  </p>
+              </div>
+  
+              <!-- Quick Links -->
+              <div>
+                  <h3 class="text-xl font-semibold mb-4">Liens rapides</h3>
+                  <ul class="space-y-2">
+                      <li><a href="{% url 'home' %}" class="text-gray-300 hover:text-white transition-colors">Accueil</a></li>
+                      <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Catalogue</a></li>
+                      <li><a href="#" class="text-gray-300 hover:text-white transition-colors">À propos</a></li>
+                      <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Contact</a></li>
+                  </ul>
+              </div>
+  
+              <!-- Contact Info -->
+              <div>
+                  <h3 class="text-xl font-semibold mb-4">Contact</h3>
+                  <ul class="space-y-2 text-gray-300">
+                      <li class="flex items-center">
+                          <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                              <path fill="currentColor" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+                          </svg>
+                          123 Rue de la Bibliothèque, Ville
+                      </li>
+                      <li class="flex items-center">
+                          <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                              <path fill="currentColor" d="M502.3 190.8L327.4 338.1c-17.8 15.4-43.6 15.4-61.4 0L9.7 190.8C3.9 186.1 0 178.9 0 171.1V144c0-26.5 21.5-48 48-48h416c26.5 0 48 21.5 48 48v27.1c0 7.8-3.9 15-9.7 19.7z"/>
+                          </svg>
+                          contact@bibliotheque.fr
+                      </li>
+                      <li class="flex items-center">
+                          <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                              <path fill="currentColor" d="M511.7 387.1l-23.6-99.3c-2.7-11.5-12.2-20.1-24-21.9l-85.6-12.4c-11.1-1.6-21.7 3.3-28.1 12.4l-39.3 53.6c-38.8-20.4-70.2-51.8-90.6-90.6l53.6-39.3c9-6.5 14-17 12.4-28.1l-12.4-85.6c-1.8-11.7-10.4-21.3-21.9-24L124.9.3C111.3-2.8 96.3 4.8 89.6 18.1L44.8 105.7c-4.7 9.5-6.2 20.4-4.1 30.8c27.1 129.6 129.3 231.8 258.9 258.9c10.4 2.1 21.3.6 30.8-4.1l87.6-44.8c13.3-6.7 20.9-21.7 17.8-35.3z"/>
+                          </svg>
+                          +33 1 23 45 67 89
+                      </li>
+                  </ul>
+              </div>
+          </div>
+  
+          <!-- Copyright -->
+          <div class="mt-10 border-t border-gray-700 pt-6 text-center text-gray-400 text-sm">
+              &copy; 2025 Bibliothèque. Tous droits réservés.
+          </div>
+      </div>
+  </footer>
+  <script>
+    // Toggle notification dropdown
+document.querySelector('.notification-icon').addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const dropdown = this.nextElementSibling;
+    dropdown.classList.toggle('hidden');
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.notification-dropdown') && !e.target.closest('.notification-icon')) {
+        document.querySelectorAll('.notification-dropdown').forEach(dropdown => {
+            dropdown.classList.add('hidden');
+        });
+    }
+});
+
+// Mark as read when clicking notifications
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-notification-id]').forEach(item => {
+        item.addEventListener('click', function() {
+            const notificationId = this.dataset.notificationId;
+            if (notificationId) {
+                fetch(`/notifications/mark-read/${notificationId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                });
+            }
+        });
+    });
+});
+  </script>
+      

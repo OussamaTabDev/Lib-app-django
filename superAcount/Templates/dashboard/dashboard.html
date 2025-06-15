@@ -1,0 +1,297 @@
+{% extends './base.html' %}
+{% block header %}
+Library Dashboard
+{% endblock %}
+
+{% load static %}
+{% block content %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Books Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out p-6">
+        <div class="flex items-center">
+            <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <i class="fas fa-book text-blue-500 dark:text-blue-300 text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Books</h3>
+                <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.total_books }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400">{{ stats.total_copies }} copies</p>
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2">
+                {% if stats.total_copies > 0 %}
+                <div class="bg-blue-500 h-2.5 rounded-full" style="width: {{ stats.total_copies|yesno:"{% widthratio stats.borrowed_books stats.total_copies 100 %},0" }}%"></div>
+                {% else %}
+                <div class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Users Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out p-6">
+        <div class="flex items-center">
+            <div class="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
+                <i class="fas fa-users text-green-500 dark:text-green-300 text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active Users</h3>
+                <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.total_users }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400">{{ stats.active_librarians }} librarians</p>
+            <div class="flex mt-2 -space-x-2 overflow-hidden">
+                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="">
+                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://i.pravatar.cc/150?u=a042581f4e29026705d" alt="">
+                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://i.pravatar.cc/150?u=a042581f4e29026706d" alt="">
+                <a class="flex items-center justify-center h-8 w-8 rounded-full bg-green-50 text-green-500 ring-2 ring-white dark:ring-gray-800" href="{% url 'users_lists' %}">+{{ stats.total_users|add:"-3" }}</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Borrows Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out p-6">
+        <div class="flex items-center">
+            <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
+                <i class="fas fa-hand-holding-heart text-yellow-500 dark:text-yellow-300 text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Active Borrows</h3>
+                <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.active_borrows }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400">{{ stats.pending_requests }} pending requests</p>
+            <div class="mt-2 text-xs font-medium">
+                <span class="text-green-500">{{ stats.approved_requests }} Approved</span> /
+                <span class="text-yellow-500">{{ stats.pending_requests }} Pending</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overdue Books Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out p-6">
+        <div class="flex items-center">
+            <div class="p-3 bg-red-100 dark:bg-red-900 rounded-lg">
+                <i class="fas fa-exclamation-triangle text-red-500 dark:text-red-300 text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Overdue Books</h3>
+                <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.overdue_borrows }}</p>
+            </div>
+        </div>
+         <div class="mt-4">
+            <p class="text-sm text-red-500 dark:text-red-400">Action Required</p>
+            <a href="#overdue-books" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">View All</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Area -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Reading Trends Section -->
+    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Reading Trends</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Popular Books Chart -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Most Popular Books</h3>
+                <div class="h-64">  <!-- Fixed height container -->
+                    <canvas id="popularBooksChart" height="250"></canvas>
+                </div>
+            </div>
+            
+            <!-- Categories Chart -->
+            <div>
+                <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Top Categories</h3>
+                <div class="h-64">  <!-- Fixed height container -->
+                    <canvas id="categoriesChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Requests Section -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Pending Requests</h2>
+            <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">{{ stats.pending_requests }}</span>
+        </div>
+        <div class="space-y-4">
+            {% for request in recent_requests|slice:":4" %}
+            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="flex items-center space-x-3">
+                    <img class="w-10 h-10 rounded-full" src="https://i.pravatar.cc/150?u={{ request.utilisateur.username }}" alt="{{ request.utilisateur.username }}">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ request.utilisateur.username }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ request.exemplaire.livre.titre|truncatechars:25 }}</p>
+                    </div>
+                </div>
+                <form method="POST" action="{% url 'manage_borrow_requests' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="request_id" value="{{ request.id }}">
+                    <div class="flex space-x-2">
+                        <button type="submit" name="action" value="approve" class="p-2 rounded-full text-green-600 bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800 transition-colors">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button type="submit" name="action" value="reject" class="p-2 rounded-full text-red-600 bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                <i class="fas fa-check-circle text-4xl mb-2"></i>
+                <p>No pending requests</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Overdue Books Section -->
+<div id="overdue-books" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Overdue Books</h2>
+        <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">{{ stats.overdue_borrows }} overdue</span>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Book Title</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Due Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Days Overdue</th>
+                    <th class="relative px-6 py-3">
+                        <span class="sr-only">Actions</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {% for borrow in overdue_borrows %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <img class="h-10 w-10 rounded-full" src="https://i.pravatar.cc/150?u={{ borrow.utilisateur.username }}" alt="{{ borrow.utilisateur.username }}">
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ borrow.utilisateur.username }}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ borrow.utilisateur.email }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ borrow.exemplaire.livre.titre }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ borrow.date_retour_prevue|date:"M d, Y" }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                            {{ borrow.days_overdue }} days
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200">
+                            <i class="fas fa-envelope mr-1"></i> Send Reminder
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">No overdue books</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Popular Books Data
+    const popularBooksData = {
+        labels: ["The Midnight Library", "Project Hail Mary", "Klara and the Sun", "The Four Winds", "The Push"],
+        datasets: [{
+            label: 'Times Borrowed',
+            data: [120, 95, 80, 72, 65],
+            backgroundColor: 'rgba(59, 130, 246, 0.5)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 2,
+            borderRadius: 5,
+        }]
+    };
+
+    // Categories Data
+    const categoriesData = {
+        labels: ["Fiction", "Science", "History", "Fantasy", "Biography"],
+        datasets: [{
+            label: 'Books per Category',
+            data: [300, 150, 210, 180, 90],
+            backgroundColor: [
+                'rgba(59, 130, 246, 0.7)',
+                'rgba(16, 185, 129, 0.7)',
+                'rgba(245, 158, 11, 0.7)',
+                'rgba(239, 68, 68, 0.7)',
+                'rgba(139, 92, 246, 0.7)'
+            ],
+            hoverOffset: 4
+        }]
+    };
+
+    // Chart Options
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(200, 200, 200, 0.2)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    };
+
+    // Initialize Charts
+    document.addEventListener('DOMContentLoaded', function() {
+        // Popular Books Chart (Horizontal Bar)
+        new Chart(document.getElementById('popularBooksChart').getContext('2d'), {
+            type: 'bar',
+            data: popularBooksData,
+            options: { ...chartOptions, indexAxis: 'y' }
+        });
+
+        // Categories Chart (Doughnut)
+        new Chart(document.getElementById('categoriesChart').getContext('2d'), {
+            type: 'doughnut',
+            data: categoriesData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock %}

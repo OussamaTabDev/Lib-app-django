@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Your Notifications</h2>
+        <button id="clear-all-btn" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md text-gray-700 text-sm font-medium transition-colors">
+            Mark All as Read
+        </button>
+    </div>
+    
+    {% if notifications %}
+        <div class="bg-white shadow rounded-md overflow-hidden">
+            {% for notification in notifications %}
+                <a href="{% if notification.link %}{{ notification.link }}{% else %}#{% endif %}" 
+                   class="block px-6 py-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors {% if not notification.is_read %}bg-blue-50{% endif %}"
+                   data-notification-id="{{ notification.id }}">
+                    <div class="flex justify-between">
+                        <p class="{% if not notification.is_read %}font-semibold text-blue-800{% else %}text-gray-700{% endif %}">
+                            {{ notification.message }}
+                        </p>
+                        <span class="text-xs text-gray-500">
+                            {{ notification.created_at|timesince }} ago
+                        </span>
+                    </div>
+                    {% if notification.link %}
+                        <p class="text-xs text-blue-600 mt-1">Click to view</p>
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white shadow rounded-md p-6 text-center">
+            <p class="text-gray-500">You have no notifications.</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+document.getElementById('clear-all-btn').addEventListener('click', function() {
+    fetch("{% url 'clear_all_notifications' %}", {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            location.reload();
+        }
+    });
+});
+</script>
+{% endblock %}

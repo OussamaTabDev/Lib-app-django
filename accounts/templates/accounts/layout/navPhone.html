@@ -1,0 +1,53 @@
+<!-- Mobile Navigation Menu -->
+<div class="md:hidden">
+    <div id="mobileMenu" class="fixed inset-0 bg-gray-800 bg-opacity-75 z-50 hidden">
+        <div class="flex items-center justify-end p-4">
+            <button onclick="toggleMobileMenu()" class="text-white hover:text-gray-300">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        <nav class="flex flex-col items-center space-y-6 pt-8">
+            <a href="{% url 'home' %}" class="text-white text-xl hover:text-yellow-200 transition-colors">
+                Accueil
+            </a>
+            {% if user.is_authenticated %}
+                {% if user.est_bibliothecaire %}
+                    <a href="{% url 'liste_livres' %}" class="text-white text-xl hover:text-yellow-200 transition-colors">
+                        Livres
+                    </a>
+                {% endif %}
+                <a href="{% url 'profile' %}" class="text-white text-xl hover:text-yellow-200 transition-colors">
+                    Profile
+                </a>
+                <a href="{% url 'logout' %}" class="text-white text-xl hover:text-yellow-200 transition-colors">
+                    Déconnexion
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="text-white text-xl hover:text-yellow-200 transition-colors">
+                    Connexion
+                </a>
+                <a href="{% url 'register' %}" class="text-white text-xl hover:text-yellow-200 transition-colors">
+                    Inscription
+                </a>
+            {% endif %}
+        </nav>
+    </div>
+    
+    <!-- Mobile Menu Toggle Button -->
+    <button onclick="toggleMobileMenu()" class="fixed top-4 right-4 text-gray-800 hover:text-gray-600 z-40">
+        <i class="fas fa-bars text-2xl"></i>
+    </button>
+</div>
+
+<script>
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    } else {
+        mobileMenu.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+}
+</script>

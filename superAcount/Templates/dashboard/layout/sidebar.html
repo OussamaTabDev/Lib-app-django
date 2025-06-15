@@ -1,0 +1,99 @@
+{% load static %}
+
+{% comment %}
+  IN YOUR base.html OR MAIN LAYOUT FILE:
+  You need to wrap your header and content like this to allow the header button
+  to control the sidebar.
+{% endcomment %}
+
+<div x-data="{ sidebarOpen: false }" class="relative min-h-screen lg:flex">
+
+    <nav 
+        class="fixed inset-y-0 left-0 z-30 flex h-full w-64 transform flex-col overflow-y-auto bg-gray-900 text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0"
+        :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
+    >
+        <div class="flex items-center justify-center p-4 h-16 border-b border-gray-800">
+            <h3 class="text-2xl font-bold text-white tracking-wider flex items-center gap-x-2">
+                <i class="fas fa-shield-alt text-indigo-400"></i>
+                <span>AdminDash</span>
+            </h3>
+        </div>
+
+        <div class="flex-grow px-4 py-6 space-y-2">
+            {% with request.path as path %}
+            
+            <a href="{% url '/admins/dashboard/' %}" 
+               class="flex items-center space-x-3 p-3 rounded-lg transition-colors
+                      {% if path == '/admins/dashboard/' %}
+                        bg-gray-800 text-white border-l-4 border-indigo-400
+                      {% else %}
+                        text-gray-400 hover:bg-gray-700 hover:text-white
+                      {% endif %}">
+                <i class="w-6 fa-solid fa-gauge-high"></i>
+                <span class="font-medium">Dashboards</span>
+            </a>
+
+            <a href="#" 
+               class="flex items-center space-x-3 p-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white transition-colors">
+                <i class="w-6 fa-solid fa-address-book"></i>
+                <span class="font-medium">Empruntes</span>
+            </a>
+            
+            <a href="{% url 'users_lists' %}" 
+               class="flex items-center space-x-3 p-3 rounded-lg transition-colors
+                      {% if path == '/users_lists/' %}
+                        bg-gray-800 text-white border-l-4 border-indigo-400
+                      {% else %}
+                        text-gray-400 hover:bg-gray-700 hover:text-white
+                      {% endif %}">
+                <i class="w-6 fa-solid fa-users"></i>
+                <span class="font-medium">Users</span>
+            </a>
+            
+            <a href="{% url 'liste_livres' %}" 
+               class="flex items-center space-x-3 p-3 rounded-lg transition-colors
+                      {% if '/liste_livres/' in path or '/detailLivre/' in path or '/ajouter_livre/' in path or '/edit_livre/' in path %}
+                        bg-gray-800 text-white border-l-4 border-indigo-400
+                      {% else %}
+                        text-gray-400 hover:bg-gray-700 hover:text-white
+                      {% endif %}">
+                <i class="w-6 fa-solid fa-book"></i>
+                <span class="font-medium">Livres</span>
+            </a>
+            {% endwith %}
+        </div>
+
+        <div class="p-4 border-t border-gray-800">
+            <div class="flex items-center space-x-3">
+                <img class="h-10 w-10 rounded-full object-cover" src="{% static 'img/2023MayFri.jpg' %}" alt="User avatar">
+                <div>
+                    <p class="text-sm font-semibold text-white">{{ user.username|default:'Admin User' }}</p>
+                    <a href="{% url 'logout_user' %}" class="flex items-center gap-x-2 text-xs text-gray-400 hover:text-indigo-400">
+                        <span>Logout</span>
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="flex-1">
+        <header class="bg-white dark:bg-gray-800 shadow-md">
+           <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white lg:hidden">
+               <i class="fa-solid fa-bars text-xl"></i>
+           </button>
+           </header>
+
+        <main class="p-6">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <div 
+        x-show="sidebarOpen"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 z-20 bg-black/50 transition-opacity duration-300 lg:hidden"
+        x-transition:enter="ease-out" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    ></div>
+
+</div>

@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        /* Optional: Add custom scrollbar styles for a more polished look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; /* dark:bg-gray-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f46e5; /* indigo-600 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4338ca; /* indigo-700 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+
+    <div x-data="{ sidebarOpen: false }" class="relative min-h-screen lg:flex">
+
+        <nav 
+            class="fixed inset-y-0 left-0 z-30 flex h-full w-64 transform flex-col overflow-y-auto bg-gray-900 text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0"
+            :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
+            >
+            <div class="flex items-center justify-center p-4 h-16 border-b border-gray-800">
+                <h3 class="text-2xl font-bold text-white tracking-wider flex items-center gap-x-2">
+                    <i class="fas fa-shield-alt text-indigo-400"></i>
+                    <span>AdminDash</span>
+                </h3>
+            </div>
+
+            <div class="flex-grow px-4 py-6 space-y-2">
+                {% with request.path as path %}
+                <a href="{% url 'library_dashboard' %}" 
+                   class="flex items-center space-x-3 p-3 rounded-lg transition-colors
+                          {% if path == '/admins/dashboard/' %}
+                            bg-gray-800 text-white border-l-4 border-indigo-400
+                          {% else %}
+                            text-gray-400 hover:bg-gray-700 hover:text-white
+                          {% endif %}">
+                    <i class="w-6 fa-solid fa-gauge-high"></i>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+
+                <a href="{% url 'empruntes_page' %}" 
+                   class="flex items-center space-x-3 p-3 rounded-lg transition-colors
+                          {% if path == '/admins/empruntes/' %}
+                            bg-gray-800 text-white border-l-4 border-indigo-400
+                          {% else %}
+                            text-gray-400 hover:bg-gray-700 hover:text-white
+                          {% endif %}">
+                    <i class="w-6 fa-solid fa-address-book"></i>
+                    <span class="font-medium">Empruntes</span>
+                </a>
+                
+                <a href="{% url 'users_lists' %}" 
+                   class="flex items-center space-x-3 p-3 rounded-lg transition-colors
+                          {% if path == '/accounts/users_lists/' %}
+                            bg-gray-800 text-white border-l-4 border-indigo-400
+                          {% else %}
+                            text-gray-400 hover:bg-gray-700 hover:text-white
+                          {% endif %}">
+                    <i class="w-6 fa-solid fa-users"></i>
+                    <span class="font-medium">Users</span>
+                </a>
+
+                <a href="{% url 'manage_borrow_requests' %}" 
+                   class="flex items-center space-x-3 p-3 rounded-lg transition-colors
+                          {% if path == 'admins/requests/' %}
+                            bg-gray-800 text-white border-l-4 border-indigo-400
+                          {% else %}
+                            text-gray-400 hover:bg-gray-700 hover:text-white
+                          {% endif %}">
+                    <i class="w-6 fa-solid fa-users"></i>
+                    <span class="font-medium">Requests</span>
+                </a>
+                
+
+                
+
+                
+
+                <a href="{% url 'book_management' %}" 
+                   class="flex items-center space-x-3 p-3 rounded-lg transition-colors
+                          {% if path == '/admins/books/' %}
+                            bg-gray-800 text-white border-l-4 border-indigo-400
+                          {% else %}
+                            text-gray-400 hover:bg-gray-700 hover:text-white
+                          {% endif %}">
+                    <i class="w-6 fa-solid fa-book"></i>
+                    <span class="font-medium">Books</span>
+                </a>
+                {% endwith %}
+            </div>
+
+            <div class="p-4 border-t border-gray-800">
+                <div class="flex items-center space-x-3">
+                    <img class="h-10 w-10 rounded-full object-cover" src="{% static 'img/2023MayFri.jpg' %}" alt="User avatar">
+                    <div>
+                        <p class="text-sm font-semibold text-white">{{ user.username|default:'Admin User' }}</p>
+                        <a href="{% url 'logout_user' %}" class="flex items-center gap-x-2 text-xs text-gray-400 hover:text-indigo-400">
+                            <span>Logout</span>
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="flex-1">
+            <header class="bg-white dark:bg-gray-800 shadow-md">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="flex h-16 items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white lg:hidden" aria-label="Open sidebar">
+                                <i class="fa-solid fa-bars text-xl"></i>
+                            </button>
+                            
+                            <h1 class="text-xl font-bold text-gray-800 dark:text-white">
+                                {% block header %}{% endblock %}
+                            </h1>
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <div class="relative hidden md:block">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <i class="fa-solid fa-search text-gray-400"></i>
+                                </div>
+                                <input type="text" class="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 py-2 pl-10 pr-4 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Search..."/>
+                            </div>
+
+                            <div x-data="{ userMenuOpen: false }" class="relative">
+                                <div>
+                                    <button @click="userMenuOpen = !userMenuOpen" type="button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                        <span class="sr-only">Open user menu</span>
+                                        <img class="h-10 w-10 rounded-full object-cover" src="{% static 'img/2023MayFri.jpg' %}" alt="User profile picture">
+                                    </button>
+                                </div>
+                                <div 
+                                    x-show="userMenuOpen" 
+                                    @click.outside="userMenuOpen = false"
+                                    x-transition
+                                    class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" 
+                                    role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1">Your Profile</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1">Settings</a>
+                                    <a href="{% url 'logout_user' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1">Sign out</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-4 sm:p-6 lg:p-8">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+
+        <div 
+            x-show="sidebarOpen"
+            @click="sidebarOpen = false"
+            class="fixed inset-0 z-20 bg-black/50 transition-opacity duration-300 lg:hidden"
+            x-transition:enter="ease-out" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            ></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

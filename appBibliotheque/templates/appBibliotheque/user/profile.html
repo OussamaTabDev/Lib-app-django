@@ -1,0 +1,159 @@
+{% extends './base.html' %}
+{% load static tailwind_tags %}
+{% block content2 %}
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {% if messages %}
+        <div class="w-full mb-8 space-y-4">
+            {% for message in messages %}
+            <div class="p-4 rounded-xl shadow-lg backdrop-blur-sm {% if message.tags == 'success' %}bg-emerald-50/80 text-emerald-800 border border-emerald-200/50{% elif message.tags == 'warning' %}bg-amber-50/80 text-amber-800 border border-amber-200/50{% elif message.tags == 'error' %}bg-red-50/80 text-red-800 border border-red-200/50{% else %}bg-blue-50/80 text-blue-800 border border-blue-200/50{% endif %}">
+                <div class="flex items-start">
+                    <svg class="w-6 h-6 mr-3 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        {% if message.tags == 'success' %}
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        {% elif message.tags == 'warning' %}
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        {% elif message.tags == 'error' %}
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        {% else %}
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        {% endif %}
+                    </svg>
+                    <div class="flex-1">
+                        <span class="font-medium">{{ message }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            <!-- User Profile Section -->
+            <div class="xl:col-span-1 space-y-8">
+                <!-- Main Profile Card -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+                    <div class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 h-32 relative">
+                        <div class="absolute inset-0 bg-black/10"></div>
+                        <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+                            <div class="w-24 h-24 rounded-full border-4 border-white bg-white shadow-xl flex items-center justify-center">
+                                {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="w-full h-full rounded-full object-cover">
+                                {% else %}
+                                <svg class="w-12 h-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                                </svg>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-8 pt-16 pb-8 text-center">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ user.username }}</h2>
+                        <p class="text-gray-600 mb-4">{{ user.email }}</p>
+                        {% if user.bio %}
+                        <p class="text-gray-500 text-sm leading-relaxed bg-gray-50 rounded-lg p-3">{{ user.bio }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="border-t border-gray-100 px-8 py-6">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600 flex items-center">
+                                    <svg class="w-5 h-5 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Membre depuis
+                                </span>
+                                <span class="font-semibold text-gray-800">{{ user.date_joined|date:"d/m/Y" }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600 flex items-center">
+                                    <svg class="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                    Livres empruntés
+                                </span>
+                                <span class="font-semibold text-gray-800">{{ emprunts|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-100 px-8 py-6">
+                        <a href="{% url 'edit_profile' %}" class="w-full flex justify-center items-center px-6 py-3 border-2 border-gray-200 shadow-sm text-sm font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Modifier le profil
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Borrowed Books Section - Reduced size cards -->
+            <div class="xl:col-span-3">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+        {% for emprunt in emprunts %}
+        <div class="group bg-white rounded-md shadow-sm hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border border-gray-200 overflow-hidden text-sm">
+            
+            <div class="relative h-32 overflow-hidden rounded-t-md">
+                <img src="{{ emprunt.exemplaire.livre.image_couverture.url }}" alt="{{ emprunt.exemplaire.livre.titre }}"
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
+                
+                <div class="absolute top-2 right-2">
+                    <div class="{% if emprunt.est_retourne %}bg-green-600{% else %}bg-orange-600{% endif %} text-white px-2 py-1 rounded-full text-xs font-medium shadow-md">
+                        {% if emprunt.est_retourne %}✓ Retourné{% else %}⏳ Prêté{% endif %}
+                    </div>
+                </div>
+                
+                <div class="absolute bottom-2 left-2 right-2">
+                    <h4 class="text-white font-semibold text-sm line-clamp-1 drop-shadow-md">{{ emprunt.exemplaire.livre.titre }}</h4>
+                    <p class="text-white/80 text-xs drop-shadow-sm">{{ emprunt.exemplaire.livre.auteur }}</p>
+                </div>
+            </div>
+
+            <div class="p-3 space-y-2">
+                <div class="grid grid-cols-2 gap-1 text-xs">
+                    <div class="text-center">
+                        <p class="text-gray-600 font-medium">Emprunté</p>
+                        <p class="font-semibold text-gray-900">{{ emprunt.date_emprunt|date:"d/m/Y" }}</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-gray-600 font-medium">{% if emprunt.est_retourne %}Retour{% else %}Échéance{% endif %}</p>
+                        <p class="font-semibold {% if emprunt.est_retourne %}text-green-700{% else %}text-orange-700{% endif %}">{{ emprunt.date_retour|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+
+                {% if not emprunt.est_retourne %}
+                <div class="flex gap-2 pt-2">
+                    <a href="{% url 'detail_livre' emprunt.exemplaire.livre.slug %}" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded-md text-sm font-medium text-center transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 inline-block mr-1 align-text-bottom">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10c1.764-3.707 4.965-6 8.542-6.086a10.004 10.004 0 012.165.477l1.707 1.707a1 1 0 001.414-1.414l-1.707-1.707a12.02 12.02 0 00-2.681-.634C8.079 4.026 4.943 6.327 3.05 9.023a.998.998 0 00-.61 1.077l.677.677a1 1 0 001.414-1.414l-.677-.677c.194-.187.424-.364.683-.52A2.411 2.411 0 0110 8c.828 0 1.57.322 2.121.879l.677.677a1 1 0 001.414-1.414l-.677-.677a4.41 4.41 0 00-3.182-1.287 4.41 4.41 0 00-3.182 1.287c-1.394 2.922-4.108 5.113-7.694 7.314a.998.998 0 00-.2 1.178l.677.677a1 1 0 001.414-1.414l-.677-.677a1.99 1.99 0 01-.307-1.098A9.992 9.992 0 0110 12z" clip-rule="evenodd" />
+                        </svg>
+                        Voir
+                    </a>
+                    <form method="post" action="{% url 'return_book' emprunt.id %}" class="flex-1">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-md text-sm font-medium transition-colors">
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 inline-block mr-1 align-text-bottom"></svg>
+                                <path fill-rule="evenodd" d="M4.636 1.636a2 2 0 00-2.828 2.828l8.94 8.94a2 2 0 002.828-2.828l-8.94-8.94zM5.21 13.79A2 2 0 008.038 10.96l-2.828-2.828a2 2 0 00-2.828 2.828l2.828 2.828zm9.9 0A2 2 0 0012.272 10.96l2.828-2.828a2 2 0 002.828 2.828l-2.828 2.828zM15.364 1.636a2 2 0 002.828 2.828l-8.94 8.94a2 2 0 00-2.828-2.828l8.94-8.94z" clip-rule="evenodd" />
+                            </svg>
+                            Retourner
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

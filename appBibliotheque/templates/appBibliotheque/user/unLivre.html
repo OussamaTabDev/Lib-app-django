@@ -1,0 +1,91 @@
+{% extends './base.html' %}
+{% load static tailwind_tags %}
+{% block content2 %}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <a href="{% url 'home' %}" class="inline-flex items-center mb-6 text-gray-700 hover:text-blue-600 transition-colors">
+        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
+            <path fill="currentColor" d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/>
+        </svg>
+        <span>Retour</span>
+    </a>
+    
+    <div class="bg-white rounded-xl shadow-md p-8">
+        <div class="flex flex-col md:flex-row gap-8">
+            <div class="w-full md:w-1/3 lg:w-1/4">
+                <div class="aspect-[2/3] rounded-xl overflow-hidden shadow-md">
+                    <img src="{{livre_detail.image_couverture.url}}" alt="{{livre_detail.titre}}" class="w-full h-full object-cover" />
+                </div>
+            </div>
+            
+            <div class="w-full md:w-2/3 lg:w-3/4">
+                <h1 class="text-3xl font-bold text-gray-800 mb-4">{{livre_detail.titre}}</h1>
+                
+                <p class="text-gray-600 mb-6">
+                    {{livre_detail.description}}
+                </p>
+                
+                <div class="grid grid-cols-2 gap-y-2 gap-x-8 mb-8 border-t border-b border-gray-200 py-6">
+                    <div class="text-gray-600 font-medium">Auteur</div>
+                    <div>{{livre_detail.auteur}}</div>
+                    
+                    <div class="text-gray-600 font-medium">ISBN</div>
+                    <div>{{livre_detail.isbn}}</div>
+                    
+                    <div class="text-gray-600 font-medium">Exemplaire</div>
+                    <div>{{livre_detail.get_NbrExemple}}</div>
+                    
+                    <div class="text-gray-600 font-medium">Etat</div>
+                    <div>
+                        {% if livre_detail.exemplaires_livre.count > 1 %}
+                        <span class="text-green-600 font-medium">Disponible</span>
+                        {% else %}
+                        <span class="text-red-600 font-medium">Non Disponible</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if user.is_authenticated %}
+                <a href="{% url 'emprunter_exemplaire' livre_detail.slug %}" class="inline-block py-3 px-8 bg-blue-600 text-white font-medium rounded-xl transition-all hover:bg-blue-700 hover:shadow-md">Demander</a>
+                {% else %}
+                <a href="{% url 'login' %}" class="inline-block py-3 px-8 bg-blue-600 text-white font-medium rounded-xl transition-all hover:bg-blue-700 hover:shadow-md">Se connecter</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dialog modal -->
+<dialog id="dialog" class="bg-white rounded-xl shadow-xl p-8 max-w-md w-full">
+    <form class="space-y-4" action="">
+        <div>
+            <label for="Nom" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+            <input type="text" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Nom" disabled value="Achraf">
+        </div>
+        <div>
+            <label for="Prenom" class="block text-sm font-medium text-gray-700 mb-1">Prenom</label>
+            <input type="text" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Prenom" disabled value="Achraf">
+        </div>
+        <div>
+            <label for="Livre" class="block text-sm font-medium text-gray-700 mb-1">Livre</label>
+            <input type="text" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Nom Livre" disabled value="Nom Livre">
+        </div>
+        <div>
+            <label for="date_retour" class="block text-sm font-medium text-gray-700 mb-1">Date de retour Prevue</label>
+            <input type="date" class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="date_retour">
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4">
+            <button onclick="window.dialog.close();" type="button" class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">Annuler</button>
+            <button type="submit" class="py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Confirmer</button>
+        </div>
+    </form>
+    
+    <button onclick="window.dialog.close();" aria-label="close" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</dialog>
+
+{% endblock %}

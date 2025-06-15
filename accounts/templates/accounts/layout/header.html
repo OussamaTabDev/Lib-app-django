@@ -1,0 +1,32 @@
+<header class="py-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">{% block header_title %}{% endblock %}</h1>
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex space-x-8">
+            <a href="{% url 'home' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                Accueil
+            </a>
+            {% if user.is_authenticated %}
+                {% if user.est_bibliothecaire %}
+                    <a href="{% url 'liste_livres' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                        Livres
+                    </a>
+                {% endif %}
+                <a href="{% url 'profile' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                    Profile
+                </a>
+                <a href="{% url 'logout' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                    Déconnexion
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                    Connexion
+                </a>
+                <a href="{% url 'register' %}" class="text-gray-600 hover:text-blue-600 transition-colors">
+                    Inscription
+                </a>
+            {% endif %}
+        </nav>
+    </div>
+</header>

@@ -1,0 +1,93 @@
+{% extends './base.html' %}
+
+{% block header %}
+<h1 class="text-2xl font-bold text-gray-800">Add New Book</h1>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6">
+    <form action="{% url 'add_book' %}" method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Book Title*</label>
+                <input name="title" id="title" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter book title" required>
+            </div>
+            
+            <div>
+                <label for="isbn" class="block text-sm font-medium text-gray-700 mb-1">ISBN*</label>
+                <input name="isbn" id="isbn" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter ISBN number" required>
+            </div>
+            
+            <div>
+                <label for="author" class="block text-sm font-medium text-gray-700 mb-1">Author*</label>
+                <input name="author" id="author" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter author name" required>
+            </div>
+            
+            <div>
+                <label for="categories" class="block text-sm font-medium text-gray-700 mb-1">Categories</label>
+                <input name="categories" id="categories" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Fiction, Science">
+                <p class="text-xs text-gray-500 mt-1">Separate multiple categories with commas</p>
+            </div>
+        </div>
+        
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description*</label>
+            <textarea name="description" id="description" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="6" placeholder="Enter book description" required></textarea>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Book Cover Image</label>
+            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                <div class="space-y-1 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <div class="flex text-sm text-gray-600">
+                        <label for="file" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                            <span>Upload a file</span>
+                            <input id="file" name="cover_image" type="file" class="sr-only">
+                        </label>
+                        <p class="pl-1">or drag and drop</p>
+                    </div>
+                    <p class="text-xs text-gray-500">PNG, JPG up to 2MB</p>
+                    <p id="filename" class="text-sm text-gray-900 mt-2"></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex justify-end">
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                Add Book
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Update filename display when file is selected
+    document.getElementById('file').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+        document.getElementById('filename').textContent = fileName;
+    });
+</script>
+
+<style>
+    /* Add some custom styles if needed */
+    .border-dashed {
+        border-style: dashed;
+    }
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+</style>
+{% endblock %}

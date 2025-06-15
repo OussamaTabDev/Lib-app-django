@@ -1,0 +1,85 @@
+<header class="homeHeader">
+    <div class="blur"></div>
+    <nav class="laptopNav">
+        <h1>Logo</h1>
+        <ul class="link">
+            <a class="" href="/">
+                <li {% if request.path == '/' or 'genre' in request.path%} class="active"{% endif %}>Home</li>
+            </a>
+            {% if user.is_authenticated %}
+                {% if user.est_bibliothecaire %}
+                    <a href="{% url 'liste_livres' %}">
+                        <li>Livres</li>
+                    </a>
+                {% endif %}
+            {% endif %}
+            <a class="" href="{% url 'about' %}">
+                <li class="">About us</li>
+            </a>
+            <a class="" href="{% url 'contact' %}">
+                <li class="">Contact us</li>
+            </a>
+        </ul>
+        <ul class="formLink">
+            {% if user.is_authenticated %}
+                <!-- Notification dropdown -->
+                <li class="relative">
+                    <button class="notification-icon p-2 text-white hover:text-gray-200 relative">
+                        <i class="fa-solid fa-bell text-xl"></i>
+                        {% if unread_notifications > 0 %}
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                {{ unread_notifications }}
+                            </span>
+                        {% endif %}
+                    </button>
+                    
+                    <div class="notification-dropdown hidden absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg z-50 divide-y divide-gray-100">
+                        <div class="px-4 py-3 text-sm text-gray-700">
+                            <p>Notifications</p>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto">
+                            {% if recent_notifications %}
+                                {% for notification in recent_notifications %}
+                                    <a href="{% if notification.link %}{{ notification.link }}{% else %}#{% endif %}" 
+                                       class="block px-4 py-3 text-sm hover:bg-gray-50 transition-colors duration-150 {% if not notification.is_read %}bg-blue-50{% endif %}"
+                                       data-notification-id="{{ notification.id }}">
+                                        <p class="font-medium {% if not notification.is_read %}text-blue-800{% else %}text-gray-700{% endif %}">
+                                            {{ notification.message }}
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            {{ notification.created_at|timesince }} ago
+                                        </p>
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <p class="px-4 py-3 text-sm text-gray-500 italic">No notifications</p>
+                            {% endif %}
+                        </div>
+                        <div class="px-4 py-2 text-center bg-gray-50">
+                            <a href="{% url 'view_all_notifications' %}" class="text-sm font-medium text-blue-600 hover:text-blue-800">
+                                View all notifications
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                
+                <!-- Rest of your auth links -->
+            {% endif %}
+        </ul>
+        <div class="burger">
+            <i class="fa-solid fa-xl fa-bars-staggered"></i>
+        </div>
+    </nav>
+</header>
+
+
+<!-- <header class="homeHeader">
+    <div class="blur"></div>
+    <nav class="laptopNav">
+        <h1>Logo</h1>
+        <ul class="link">
+            <!-- Your existing links -->
+        </ul>
+        
+    </nav>
+</header> -->

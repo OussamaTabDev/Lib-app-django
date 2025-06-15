@@ -1,0 +1,50 @@
+{% extends "./base.html" %}
+
+{% block content %}
+<h1 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Manage Borrow Requests</h1>
+<div class="space-y-4">
+    {% for request in page_obj %}
+    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+        <div class="flex items-center space-x-3">
+            <img class="w-10 h-10 rounded-full" src="https://i.pravatar.cc/150?u={{ request.utilisateur.username }}" alt="{{ request.utilisateur.username }}">
+            <div>
+                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ request.utilisateur.username }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">{{ request.exemplaire.livre.titre|truncatechars:25 }}</p>
+            </div>
+        </div>
+        <form method="POST" action="{% url 'manage_borrow_requests' %}">
+            {% csrf_token %}
+            <input type="hidden" name="request_id" value="{{ request.id }}">
+            <div class="flex space-x-2">
+                <button type="submit" name="action" value="approve" class="p-2 rounded-full text-green-600 bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800 transition-colors">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button type="submit" name="action" value="reject" class="p-2 rounded-full text-red-600 bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    {% empty %}
+    <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+        <i class="fas fa-check-circle text-4xl mb-2"></i>
+        <p>No pending requests</p>
+    </div>
+    {% endfor %}
+</div>
+<div class="mt-4">
+    <nav class="flex justify-center">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li><a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded">Previous</a></li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            <li><a href="?page={{ num }}" class="px-3 py-1 {% if num == page_obj.number %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %} rounded">{{ num }}</a></li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

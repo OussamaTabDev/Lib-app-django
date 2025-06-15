@@ -1,0 +1,13 @@
+.env/
+env/
+__pycache__/
+*.pyc
+.env
+# VS Code settings
+.vscode/
+# environment variables
+venv/
+# db.sqlite3
+My-items/*
+#mogrations
+mydb/mogrations/*

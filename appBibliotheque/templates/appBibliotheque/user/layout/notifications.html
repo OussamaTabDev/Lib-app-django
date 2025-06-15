@@ -1,0 +1,42 @@
+{% if user.is_authenticated %}
+<div class="relative" x-data="{ open: false }">
+    <!-- Notification Bell Icon -->
+    <button @click="open = !open" class="relative p-2 text-white hover:text-yellow-200 transition-colors">
+        <i class="fas fa-bell text-xl"></i>
+        {% if unread_notifications_count > 0 %}
+        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+            {{ unread_notifications_count }}
+        </span>
+        {% endif %}
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg overflow-hidden z-50" style="display: none;">
+        <div class="py-2">
+            {% if notifications %}
+                {% for notification in notifications|slice:":5" %}
+                <a href="{% if notification.link %}{{ notification.link }}{% else %}#{% endif %}" 
+                   class="flex items-center px-4 py-3 border-b hover:bg-gray-50 {% if not notification.is_read %}bg-blue-50{% endif %}"
+                   data-notification-id="{{ notification.id }}">
+                    <div class="w-full">
+                        <p class="text-sm mb-1 {% if not notification.is_read %}font-semibold text-blue-800{% else %}text-gray-700{% endif %}">
+                            {{ notification.message }}
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            {{ notification.created_at|timesince }} ago
+                        </p>
+                    </div>
+                </a>
+                {% endfor %}
+                <a href="{% url 'view_all_notifications' %}" class="block text-center py-2 text-sm text-blue-600 font-semibold hover:text-blue-800 transition-colors">
+                    View All Notifications
+                </a>
+            {% else %}
+                <div class="px-4 py-3 text-sm text-gray-500 text-center">
+                    No notifications
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
