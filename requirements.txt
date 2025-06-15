@@ -5,3 +5,40 @@ typing_extensions==4.13.2
 Pillow==10.1.0
 django-tailwind
 django-browser-reload
+# Django and core dependencies
+Django==5.0.1
+django-crispy-forms==2.1
+crispy-tailwind==0.5.0
+Pillow==10.2.0
+
+# Authentication
+django-allauth==0.60.1
+django-auth-ldap==4.6.0
+
+# Database
+mysqlclient==2.2.1
+
+# Development tools
+django-debug-toolbar==4.2.0
+python-dotenv==1.0.0
+
+# Testing
+pytest-django==4.7.0
+coverage==7.4.0
+
+# Production
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Security
+django-cors-headers==4.3.1
+django-csp==3.7
+
+# Static file handling
+django-compressor==4.4
+django-storages==1.14.2
+
+# API (if needed)
+djangorestframework==3.14.0
+markdown==3.5.1
+django-filter==23.5

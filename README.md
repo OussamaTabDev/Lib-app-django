@@ -1,155 +1,101 @@
-# University Library Book Lending System
+# Library Management System
 
 ## Project Overview
 
-The University Library Book Lending System is a web-based platform designed to manage book lending operations for students and teachers within a university environment. The system allows users to browse, search, and borrow physical books, with digital alternatives available when physical copies are unavailable.
+A web-based Library Management System built for university students and teachers to manage book lending operations. The system provides an efficient way to browse, borrow, and manage books with both physical and digital copies support.
 
 ## Core Features
 
-- **User Authentication**: Role-based access for students, teachers, and administrators
-- **Book Catalog**: Comprehensive database of available books with search functionality
-- **Borrowing System**: Management of book loans with configurable lending periods
-- **Digital Content**: Access to digital copies when physical books are unavailable
-- **Inventory Management**: Tracking of physical copies and their status
-- **Reporting**: Statistical analysis of borrowing patterns and inventory status
+- **User Management**
+  - Role-based authentication (Students, Teachers, Administrators)
+  - User profiles and borrowing history
+  - Account management through `accounts` app
 
-## Technical Stack
+- **Book Management**
+  - Comprehensive book catalog 
+  - Multiple categories support
+  - Physical and digital copy tracking
+  - Real-time availability status
 
-- **Backend**: Django (Python web framework)
-- **Frontend**: Tailwind CSS for styling
-- **Database**: PostgreSQL
-- **Version Control**: Git
+- **Borrowing System** (`appBibliotheque`)
+  - Automated lending process
+  - Configurable loan duration (default: 3 days)
+  - Return date tracking
+  - User and admin notes
+  - Borrowing status updates
+
+## Tech Stack
+
+- **Backend:** Django (Python)
+- **Frontend:** Tailwind CSS
+- **Database:** SQLite3 (`db.sqlite3`)
+- **Static Files:** FontAwesome 6.5.2
 
 ## Project Structure
 
 ```
-university-library/
-├── accounts/             # User authentication and profiles
-├── books/                # Book catalog and inventory management
-├── borrowing/            # Loan processing and management
-├── digital_content/      # Digital book handling
-├── admin_dashboard/      # Administrative interface
-├── reports/              # Reporting and analytics
-├── static/               # Static files (CSS, JS)
-├── templates/            # HTML templates
-└── university_library/   # Main project settings
+lib-app-django/
+├── accounts/                 # User authentication and profiles
+├── appBibliotheque/         # Main library management functionality
+├── bibliotheque/            # Project settings
+├── static/                  # Static assets
+├── media/                   # User uploaded content
+└── theme/                   # UI theme components
 ```
 
-## Getting Started
-
-### Prerequisites
-
-- Python 3.8+
-- PostgreSQL
-- Node.js (for Tailwind CSS)
-
-### Installation
+## Installation
 
 1. **Clone the repository**
-   ```
-   git clone https://github.com/university/library-system.git
-   cd library-system
-   ```
+```bash
+git clone <repository-url>
+cd lib-app-django
+```
 
-2. **Set up virtual environment**
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+2. **Set up Python virtual environment**
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-3. **Install Python dependencies**
-   ```
-   pip install -r requirements.txt
-   ```
+3. **Install dependencies**
+```bash
+pip install -r requirements.txt
+```
 
-4. **Configure environment variables**
-   Create a `.env` file with the following:
-   ```
-   DEBUG=True
-   SECRET_KEY=your-secret-key
-   DATABASE_URL=postgresql://user:password@localhost:5432/library_db
-   ```
+4. **Apply database migrations**
+```bash
+python manage.py migrate
+```
 
-5. **Run migrations**
-   ```
-   python manage.py migrate
-   ```
+5. **Run development server**
+```bash
+python manage.py runserver
+```
 
-6. **Install frontend dependencies**
-   ```
-   npm install
-   ```
+## Database Models
 
-7. **Build CSS**
-   ```
-   npm run build-css
-   ```
+The system includes the following key models:
+- User profiles
+- Books catalog
+- Categories
+- Borrowing records (`Emprunter`) with:
+  - Request date (`date_demande`)
+  - Expected return date (`date_retour_prevue`)
+  - Actual return date (`date_retour_reel`)
+  - Duration in days (`duree_jours`)
+  - Status tracking
+  - User and admin notes
 
-8. **Create superuser**
-   ```
-   python manage.py createsuperuser
-   ```
+## Contributing
 
-9. **Run development server**
-   ```
-   python manage.py runserver
-   ```
+This project was developed using Agile methodology with 2-week sprint cycles. For contributions:
 
-## Book Status System
-
-Books in the system can have the following statuses:
-
-- **Available**: Ready to be borrowed
-- **Borrowed**: Currently checked out
-- **Reserved**: Set aside for a specific user
-- **Lost**: Reported missing
-- **Deteriorated**: Damaged but still usable
-- **To Remove**: Marked for removal from circulation
-- **Removed**: No longer in the collection
-
-## Borrowing Process
-
-1. User searches for a book
-2. System checks availability
-3. If available, user selects loan period (3 days, 1 week, etc.)
-4. System reserves the book and notifies user for pickup
-5. If physical copy unavailable, system offers digital alternative
-6. Books are automatically marked as overdue when loan period expires
-
-## Scheduled Tasks
-
-The system includes the following automated processes:
-
-- Due date reminders (3 days, 1 day before due date)
-- Automatic status changes for long-lost books (removed after 1 year)
-- Processing of waitlisted reservations when books become available
-
-## Development Guidelines
-
-- Follow PEP 8 style guide for Python code
-- Write unit tests for all core functionality
-- Document API endpoints using docstrings
-- Use feature branches for development
-- Submit pull requests for code review
-
-## Sprint Structure
-
-The project is being developed in 2-week sprints with the following ceremonies:
-- Sprint Planning (Day 1)
-- Daily Standups (15 minutes each morning)
-- Sprint Review (Last day)
-- Sprint Retrospective (Last day)
-- Backlog Refinement (Mid-sprint)
-
-## Team
-
-The project is being developed by a 5-person team with the following roles:
-- Backend Specialist
-- Authentication Specialist
-- Frontend Specialist
-- Full-stack (Catalog Focus)
-- Full-stack (Reporting Focus)
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
-This project is proprietary and intended for use within the university only.
+See the [LICENSE](LICENSE) file for details.
