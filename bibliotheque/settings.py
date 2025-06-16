@@ -84,7 +84,6 @@ WSGI_APPLICATION = 'bibliotheque.wsgi.application'
 
 # Add these settings
 TAILWIND_APP_NAME = 'theme'
-NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

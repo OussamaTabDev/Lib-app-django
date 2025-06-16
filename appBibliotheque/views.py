@@ -302,7 +302,6 @@ def return_book(request, emprunt_id):
     return redirect('profile')
 
 
-
-    def addnewuser(request):
-        # if method == post:
-        pass
+def addnewuser(request):
+    # if method == post:
+    pass

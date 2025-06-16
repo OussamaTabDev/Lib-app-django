@@ -4,7 +4,7 @@ from .views import (
     ajouter_livre, edit_livre, liste_livres, supprimer_exemplaire,
     detail_livre, ajouter_exemplaire, detailLivre, dashboard,
     about_us, contact_us, emprunter_exemplaire, page_ajout,profile, view_all_notifications, edit_profile,
-    return_book
+    return_book, addnewuser
 )
 
 urlpatterns = [
