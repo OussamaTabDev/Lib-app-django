@@ -1,18 +1,36 @@
 from sqlite3 import IntegrityError
-from django.shortcuts import render
-from django.contrib.auth import get_user_model,login,logout,authenticate
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect,get_object_or_404
-from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import get_user_model, login as auth_login, logout, authenticate # Renamed login to auth_login to avoid conflict
+# from django.contrib.auth import authenticate, login # Duplicate import
+# from django.contrib.auth.models import User # Not used directly, get_user_model is preferred
 from .models import Utilisateur
-from django.contrib.auth.forms import PasswordResetForm
+# from django.contrib.auth.forms import PasswordResetForm # Not used in this specific view
 from urllib.parse import unquote
+from .forms import RegistrationForm # Import the new form
+
 User = get_user_model()
 
+# Existing register view (might be replaced later)
 def register(request):
     return render(request,'accounts/register.html')
 
+# New registration view using RegistrationForm
+def register_user(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user) # Use the aliased login function
+            return redirect('home')  # Assuming 'home' is a valid URL name
+        else:
+            # Form is invalid, render again with errors
+            return render(request, 'accounts/register.html', {'form': form})
+    else:
+        form = RegistrationForm()
+    return render(request, 'accounts/register.html', {'form': form})
 
+
+# Existing signup view (manual implementation)
 def signup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -44,19 +62,18 @@ def signup(request):
 
         try:
             user = Utilisateur.objects.create_user(username=username, email=email, password=password)
-            user.save()
-            user = authenticate(username=username, password=password)
-            login(request, user)
+            # user.save() # create_user already saves
+            # user = authenticate(username=username, password=password) # Not needed right after creation if password is set
+            auth_login(request, user) # Use the aliased login function
             return redirect('home')
-        except IntegrityError:
+        except IntegrityError: # This might not be the right exception for create_user, which handles IntegrityError internally
             return render(request, 'accounts/register.html', {
                 'error': 'Une erreur s’est produite. Veuillez réessayer.'
             })
 
+    # If GET or other methods, or if POST processing falls through without redirecting
     return render(request, 'accounts/register.html')
 
-    # Si la méthode de la requête n'est pas POST, afficher le formulaire vide
-    return render(request, 'accounts/register.html')
 def pagelogin(request):
     return render(request,'accounts/login.html')
 
@@ -68,7 +85,7 @@ def login_user(request):
 
         user = authenticate(username=username, password=password)
         if user is not None:
-            login(request, user)
+            auth_login(request, user) # Use the aliased login function
             return redirect('home')
         else:
             # Gérer le cas où l'authentification échoue
@@ -93,4 +110,3 @@ def delete_user(request,username):
     if u_username and u_username.est_bibliothecaire == False:   
         u_username.delete()
     return redirect('users_lists')
-

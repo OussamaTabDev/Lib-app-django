@@ -1,10 +1,10 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from accounts.views import register, signup, pagelogin, login_user, logout_user, users_lists, delete_user
+from accounts.views import register_user, signup, pagelogin, login_user, logout_user, users_lists, delete_user # Replaced register with register_user
 
 urlpatterns = [
-    path('register/', register, name='register'),
-    path('signup/', signup, name='signup'),
+    path('register/', register_user, name='register_user'), # Changed to register_user view and name
+    path('signup/', signup, name='signup'), # Kept signup for now, might be removed later
     path('logout_user/', logout_user, name='logout_user'),
     path('users_lists/', users_lists, name='users_lists'),
     path('delete_user/<slug:username>/', delete_user, name='delete_user'),

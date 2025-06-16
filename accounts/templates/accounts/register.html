@@ -1,45 +1,60 @@
 {% extends './base.html' %}
 {% load static tailwind_tags %}
+
+{% block title %}Inscription - {{ block.super }}{% endblock %}
+
 {% block content %}
 <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl w-full flex bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div class="w-full md:w-1/2 p-8">
-            <div class="max-w-md w-full space-y-8">
-                <div>
-                    <h2 class="text-3xl font-bold text-gray-900 text-center">Inscription</h2>
-                    {% if error %}
-                    <div class="mt-2 text-center text-red-600">{{ error }}</div>
-                    {% endif %}
-                </div>
-                <form class="mt-8 space-y-6" method="POST" action="{% url 'signup' %}">
-                    {% csrf_token %}
-                    <div class="rounded-md shadow-sm space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <input type="text" name="username" required value="{{ username|default:'' }}" class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Nom d'utilisateur">
-                            </div>
-                            <div>
-                                <input type="email" name="email" required value="{{ email|default:'' }}" class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Email">
-                            </div>
-                        </div>
-                        <div>
-                            <input type="password" name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+=\[\]{};:.,<>?|\\]).{8,}" title="Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre, un caractère spécial, et avoir au moins 8 caractères." class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Mot de passe">
-                        </div>
-                        <div>
-                            <input type="password" name="confirm_password" required class="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Confirmer le mot de passe">
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <button type="submit" class="w-full sm:w-1/2 flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                            S'inscrire
-                        </button>
-                        <a href="{% url 'home' %}" class="w-full sm:w-1/2 flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                            Retour à l'accueil
-                        </a>
-                    </div>
-                </form>
+        <div class="w-full md:w-1/2 p-8 space-y-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900 text-center">Créer un compte</h2>
             </div>
+
+            <form method="POST" action="{% url 'register_user' %}" class="space-y-6">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <strong class="font-bold">Erreur !</strong>
+                        <span class="block sm:inline">{{ form.non_field_errors }}</span>
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="space-y-1">
+                        <label for="{{ field.id_for_label }}" class="text-sm font-medium text-gray-700">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <p class="text-xs text-gray-500">{{ field.help_text }}</p>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <p class="text-xs text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                {# Example of how to style fields if not using a Tailwind form plugin #}
+                <script>
+                    document.querySelectorAll('form input:not([type="checkbox"]), form select, form textarea').forEach(function(el) {
+                        el.classList.add('appearance-none', 'relative', 'block', 'w-full', 'px-3', 'py-3', 'border', 'border-gray-300', 'placeholder-gray-500', 'text-gray-900', 'rounded-xl', 'focus:outline-none', 'focus:ring-blue-500', 'focus:border-blue-500', 'focus:z-10', 'sm:text-sm');
+                    });
+                </script>
+
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <button type="submit" class="w-full sm:w-1/2 flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        S'inscrire
+                    </button>
+                    <a href="{% url 'pagelogin' %}" class="w-full sm:w-1/2 text-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        Déjà un compte ? Se connecter
+                    </a>
+                </div>
+                 <div class="text-center">
+                     <a href="{% url 'home' %}" class="font-medium text-blue-600 hover:text-blue-500">
+                        Retour à l'accueil
+                    </a>
+                 </div>
+            </form>
         </div>
         <div class="hidden md:block w-1/2">
             <img class="object-cover w-full h-full" src="{% static 'img/3afb3c491fbec34c7419f1264faf414b.jpg' %}" alt="Register image">
