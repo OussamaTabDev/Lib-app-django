@@ -9,7 +9,7 @@ urlpatterns = [
     # Include apps URLs
     path('', include('appBibliotheque.urls')),
     path('accounts/', include('accounts.urls')),
-    path('admins/', include('superAcount.urls')),
+    path('admins/', include('superAcount.urls', namespace='admins')),
     
     # Add any other global URLs here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

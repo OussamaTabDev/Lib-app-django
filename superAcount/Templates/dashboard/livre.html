@@ -8,7 +8,7 @@ Liste Livres
 {% block content %}
 {% if livres %}
 <div class="mb-6">
-  <a href="{% url 'ajouter_livre' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+  <a href="{% url 'admins:ajouter_livre' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
     <span>Ajouter Livre</span>
     <i class="fa-solid fa-plus ml-2"></i>
   </a>
@@ -44,9 +44,9 @@ Liste Livres
             {% endif %}
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-            <a href="{% url 'ajouter_exemplaire' livre.id %}" class="text-blue-600 hover:text-blue-900"><i class="fa-solid fa-pen-to-square"></i></a>
-            <a href="{% url 'supprimer_exemplaire' livre.id %}" class="text-red-600 hover:text-red-900"><i class="fa-solid fa-trash"></i></a>
-            <a href="{% url 'detailLivre' livre.id %}" class="text-gray-600 hover:text-gray-900"><i class="fa-solid fa-eye"></i></a>
+            <a href="{% url 'admins:ajouter_exemplaire' livre.id %}" class="text-blue-600 hover:text-blue-900"><i class="fa-solid fa-pen-to-square"></i></a>
+            <a href="{% url 'admins:supprimer_exemplaire' livre.id %}" class="text-red-600 hover:text-red-900"><i class="fa-solid fa-trash"></i></a>
+            <a href="{% url 'admins:detailLivre' livre.id %}" class="text-gray-600 hover:text-gray-900"><i class="fa-solid fa-eye"></i></a>
           </td>
         </tr>
         {% endfor %}

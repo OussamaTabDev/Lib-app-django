@@ -63,24 +63,34 @@ def emprunter_exemplaire(request, slug):
 
     # Vérifier si l'utilisateur a déjà emprunté ce livre et ne l'a pas encore retourné
     if Emprunter.objects.filter(utilisateur=utilisateur, exemplaire__livre=livre, est_retourne=False).exists():
-        
         message_text = f"Vous avez déjà emprunté le livre '{livre.titre}'."
         messages.warning(request, message_text)
         send_notification(utilisateur, message_text, link=reverse('detail_livre', kwargs={'slug': livre.slug}))
         return redirect('detail_livre', slug=livre.slug)
 
     # Vérifier si des exemplaires sont disponibles
-    exemplaires_disponibles = Exemplaire.objects.filter(livre=livre, disponible=True  )
+    exemplaires_disponibles = Exemplaire.objects.filter(
+        livre=livre, 
+        disponible=True,
+        emprunt_actuel__isnull=True  # Check that the exemplaire is not currently borrowed
+    )
+    
     if exemplaires_disponibles.exists():
         exemplaire = exemplaires_disponibles.first()
-        # Créer un nouvel emprunt
-        emprunt = Emprunter.objects.create(exemplaire=exemplaire, utilisateur=utilisateur)
-        # Mettre à jour la disponibilité de l'exemplaire
-        # exemplaire.disponible = False
-        exemplaire.save()
-        message_text = f"L'exemplaire du livre '{livre.titre}' a été emprunté avec succès."
-        messages.success(request, message_text)
-        send_notification(utilisateur, message_text, link=reverse('detail_livre', kwargs={'slug': livre.slug}))
+        try:
+            # Créer un nouvel emprunt
+            emprunt = Emprunter.objects.create(exemplaire=exemplaire, utilisateur=utilisateur)
+            # Mettre à jour la disponibilité de l'exemplaire
+            exemplaire.disponible = False
+            exemplaire.save()
+            
+            message_text = f"L'exemplaire du livre '{livre.titre}' a été emprunté avec succès."
+            messages.success(request, message_text)
+            send_notification(utilisateur, message_text, link=reverse('detail_livre', kwargs={'slug': livre.slug}))
+        except Exception as e:
+            message_text = f"Une erreur s'est produite lors de l'emprunt du livre '{livre.titre}'. Veuillez réessayer."
+            messages.error(request, message_text)
+            send_notification(utilisateur, message_text, link=reverse('detail_livre', kwargs={'slug': livre.slug}))
     else:
         message_text = f"Aucun exemplaire disponible pour le livre '{livre.titre}'."
         messages.error(request, message_text)
@@ -89,9 +99,13 @@ def emprunter_exemplaire(request, slug):
     return redirect('detail_livre', slug=livre.slug)
 
 
+@login_required
 def liste_livres(request):
-    livres = Livre.objects.all()
-    return render(request,'appBibliotheque/dashboard/livre.html',{'livres' : livres })
+    # Get all books ordered by title with prefetched related data
+    livres = Livre.objects.prefetch_related(
+        'exemplaires_livre'
+    ).order_by('titre')
+    return render(request, 'appBibliotheque/dashboard/livre.html', {'livres': livres})
 
 def page_ajout(request):
     return render(request, 'appBibliotheque/dashboard/ajouter.html')

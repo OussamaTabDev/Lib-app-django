@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6">
-    <form action="{% url 'add_book' %}" method="post" enctype="multipart/form-data" class="space-y-6">
+    <form action="{% url 'admins:add_book' %}" method="post" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

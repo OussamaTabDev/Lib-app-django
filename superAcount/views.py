@@ -134,7 +134,7 @@ def manage_borrow_requests(request):
                 )
                 messages.success(request, f'Emprunt refusé pour {emprunt.utilisateur.username}')
 
-        return redirect('manage_borrow_requests')
+        return redirect('admins:manage_borrow_requests')
     
     # Pagination
     paginator = Paginator(pending_requests, 20)
@@ -258,6 +258,7 @@ def book_management(request):
     categories = Categorie.objects.all().order_by('nom')
     
     context = {
+        "books" : books,
         'page_obj': page_obj,
         'categories': categories,
         'search_query': search_query,
@@ -340,7 +341,7 @@ def send_overdue_reminders(request):
         
         return redirect('library_dashboard')
     
-    return redirect('library_dashboard')
+    return redirect('admins:library_dashboard')
 
 @staff_member_required
 def user_management(request):
@@ -430,18 +431,69 @@ def add_book(request):
     categories = Categorie.objects.all()
     return render(request, 'dashboard/add_book.html', {'categories': categories})
 
+@staff_member_required
 def edit_book(request, id):
-    book = Livre.objects.get(id=id)
+    book = get_object_or_404(Livre, id=id)
+    categories = Categorie.objects.all()
+    
     if request.method == 'POST':
-        Livre.title = request.POST['title']
-        Livre.author = request.POST['author']
-        Livre.genre = request.POST['genre']
-        Livre.published_date = request.POST['published_date']
-        Livre.save()
-        return redirect('book_management')
-    return render(request, 'dashboard/edit_book.html', {'book': book})
+        try:
+            book.titre = request.POST['titre']
+            book.auteur = request.POST['auteur']
+            book.isbn = request.POST['isbn']
+            book.date_publication = request.POST['date_publication']
+            book.description = request.POST['description']
+            
+            if request.FILES.get('image_couverture'):
+                book.image_couverture = request.FILES['image_couverture']
+            
+            # Update slug from ISBN
+            book.slug = slugify(book.isbn)
+            # Make sure slug is unique
+            slug_base = book.slug
+            counter = 1
+            while Livre.objects.filter(slug=book.slug).exclude(id=book.id).exists():
+                book.slug = f"{slug_base}-{counter}"
+                counter += 1
+            
+            book.save()
+            
+            # Update categories
+            category_id = request.POST.get('categories')
+            if category_id:
+                book.categories.set([category_id])
+            
+            messages.success(request, f'Book "{book.titre}" has been updated successfully.')
+            return redirect('book_management')
+            
+        except Exception as e:
+            messages.error(request, f'Error updating book: {str(e)}')
+            
+    return render(request, 'dashboard/edit_book.html', {
+        'book': book,
+        'categories': categories
+    })
 
+@staff_member_required
 def delete_book(request, id):
-    book = Livre.objects.get(id=id)
-    Livre.delete()
-    return redirect('book_management')
+    book = get_object_or_404(Livre, id=id)
+    
+    try:
+        # Check if the book has any active borrows
+        active_borrows = book.exemplaires_livre.filter(
+            emprunt_actuel__accepter=True,
+            emprunt_actuel__date_retour_reel__isnull=True
+        ).exists()
+        
+        if active_borrows:
+            messages.error(request, f'Cannot delete "{book.titre}". The book has active borrows.')
+            return redirect('book_management')
+        
+        # Delete the book and its exemplaires
+        book.delete()
+        messages.success(request, f'Book "{book.titre}" has been deleted successfully.')
+        
+    except Exception as e:
+        messages.error(request, f'Error deleting book: {str(e)}')
+        
+    return redirect('admins:book_management')

@@ -1,0 +1,76 @@
+sequenceDiagram
+    participant User
+    participant Librarian
+    participant System
+    participant Book
+    participant Copy
+    participant BorrowRecord
+
+    Note over User,BorrowRecord: Book Borrowing Process
+
+    User->>System: Search for books
+    System->>Book: Query available books
+    Book-->>System: Return book list
+    System-->>User: Display search results
+
+    User->>System: Request to borrow book
+    System->>Book: Check book availability
+    Book->>Copy: Check available copies
+    Copy-->>Book: Return copy status
+    
+    alt Copies Available
+        Book-->>System: Copies available
+        System->>BorrowRecord: Create borrow request
+        BorrowRecord-->>System: Request created
+        System-->>User: Borrow request submitted
+        
+        Librarian->>System: Review borrow requests
+        System->>BorrowRecord: Get pending requests
+        BorrowRecord-->>System: Return request details
+        System-->>Librarian: Display pending requests
+        
+        alt Approve Request
+            Librarian->>System: Approve request
+            System->>BorrowRecord: Update status to approved
+            System->>Copy: Mark copy as borrowed
+            BorrowRecord-->>System: Status updated
+            Copy-->>System: Copy marked as borrowed
+            System-->>User: Notify approval
+            System-->>Librarian: Confirm approval
+        else Deny Request
+            Librarian->>System: Deny request
+            System->>BorrowRecord: Update status to denied
+            BorrowRecord-->>System: Status updated
+            System-->>User: Notify denial
+            System-->>Librarian: Confirm denial
+        end
+        
+    else No Copies Available
+        Book-->>System: No copies available
+        System-->>User: Show reservation option
+        User->>System: Make reservation
+        System->>Book: Create reservation
+        Book-->>System: Reservation created
+        System-->>User: Added to waiting list
+    end
+
+    Note over User,BorrowRecord: Book Return Process
+    
+    User->>System: Return book
+    System->>BorrowRecord: Find active borrow record
+    BorrowRecord-->>System: Return borrow details
+    System->>BorrowRecord: Update return date
+    System->>Copy: Mark copy as available
+    BorrowRecord-->>System: Return recorded
+    Copy-->>System: Copy available
+    
+    alt Book Overdue
+        System->>BorrowRecord: Calculate overdue days
+        BorrowRecord-->>System: Overdue information
+        System-->>Librarian: Notify overdue return
+        System-->>User: Show overdue fine
+    else On Time Return
+        System-->>User: Normal return processed
+    end
+    
+    System-->>User: Return confirmed

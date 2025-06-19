@@ -1,12 +1,82 @@
 {% extends 'dashboard/base.html' %}
 
-{% block title %}Livre Management{% endblock %}
+{% block title %}Gestion des Livres{% endblock %}
 
-{% block header %}Livre Management{% endblock %}
+{% block header %}Gestion des Livres{% endblock %}
 
 {% block content %}
 <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Manage Livres</h2>
-    <p class="text-gray-600 dark:text-gray-400">This is the livre management page. Add your content here.</p>
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Liste des Livres</h2>
+        <a href="{% url 'page_ajout' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+            Ajouter un Livre
+        </a>
+    </div>
+
+    {% if livres %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Image</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Titre</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Auteur</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ISBN</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Exemplaires</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                {% for livre in livres %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if livre.image_couverture %}
+                        <img src="{{ livre.image_couverture.url }}" alt="{{ livre.titre }}" class="h-16 w-12 object-cover rounded">
+                        {% else %}
+                        <div class="h-16 w-12 bg-gray-200 rounded flex items-center justify-center">
+                            <span class="text-gray-500">No image</span>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900 dark:text-white">{{ livre.titre }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500 dark:text-gray-300">{{ livre.auteur }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500 dark:text-gray-300">{{ livre.isbn }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500 dark:text-gray-300">
+                            {{ livre.get_exemplaires_disponibles }} / {{ livre.get_total_exemplaires }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex space-x-3">
+                            <a href="{% url 'detailLivre' livre.id %}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                Détails
+                            </a>
+                            <a href="{% url 'edit_livre' livre.id %}" class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300">
+                                Modifier
+                            </a>
+                            <a href="{% url 'ajouter_exemplaire' livre.id %}" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">
+                                + Exemplaire
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-8">
+        <p class="text-gray-500 dark:text-gray-400">Aucun livre n'a été ajouté pour le moment.</p>
+        <a href="{% url 'page_ajout' %}" class="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+            Ajouter votre premier livre
+        </a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -1,0 +1,54 @@
+flowchart LR
+    %% User Authentication
+    Start([Start]) --> Login{Login}
+    Login -->|Librarian| LibDash[Librarian Dashboard]
+    Login -->|User| UserDash[User Dashboard]
+    
+    %% User Flow
+    UserDash --> SearchBook[Search Books]
+    SearchBook --> CheckAvail{Check\nAvailability}
+    CheckAvail -->|Available| RequestBorrow[Request Borrow]
+    CheckAvail -->|Not Available| MakeReserv[Make Reservation]
+    
+    RequestBorrow --> BorrowReq{Borrow\nRequest}
+    BorrowReq -->|Approved| CollectBook[Collect Book]
+    BorrowReq -->|Denied| SearchBook
+    
+    CollectBook --> ReturnBook[Return Book]
+    ReturnBook --> CheckOverdue{Check\nOverdue}
+    CheckOverdue -->|Yes| PayFine[Pay Fine]
+    CheckOverdue -->|No| End([End])
+    PayFine --> End
+    
+    %% Librarian Flow
+    LibDash --> ManageBooks[Manage Books]
+    LibDash --> ManageUsers[Manage Users]
+    LibDash --> ProcessReq[Process Requests]
+    
+    ManageBooks --> AddBook[Add New Book]
+    ManageBooks --> UpdateBook[Update Book]
+    ManageBooks --> DeleteBook[Delete Book]
+    ManageBooks --> ManageCopies[Manage Copies]
+    
+    ProcessReq --> ViewReq[View Requests]
+    ViewReq --> ApproveReq{Approve\nRequest?}
+    ApproveReq -->|Yes| UpdateStatus[Update Status]
+    ApproveReq -->|No| RejectReq[Reject Request]
+    
+    %% Reservation Flow
+    MakeReserv --> WaitList[Add to Waitlist]
+    WaitList --> BookAvailable{Book\nAvailable?}
+    BookAvailable -->|Yes| NotifyUser[Notify User]
+    BookAvailable -->|No| WaitList
+    NotifyUser --> RequestBorrow
+    
+    %% Styling
+    classDef process fill:#a8d5ff,stroke:#333,stroke-width:2px
+    classDef decision fill:#ffb6c1,stroke:#333,stroke-width:2px
+    classDef start_end fill:#98FB98,stroke:#333,stroke-width:2px
+    classDef dashboard fill:#DDA0DD,stroke:#333,stroke-width:2px
+    
+    class Start,End start_end
+    class Login,CheckAvail,BorrowReq,CheckOverdue,ApproveReq,BookAvailable decision
+    class UserDash,LibDash dashboard
+    class SearchBook,RequestBorrow,MakeReserv,CollectBook,ReturnBook,PayFine,ManageBooks,ManageUsers,ProcessReq,AddBook,UpdateBook,DeleteBook,ManageCopies,ViewReq,UpdateStatus,RejectReq,WaitList,NotifyUser process

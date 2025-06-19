@@ -1,0 +1,90 @@
+classDiagram
+    class Utilisateur {
+        -String username
+        -String password
+        -Boolean est_bibliothecaire
+        -String slug
+        -Date date_creation
+        +save() Boolean
+        +clean_password() void
+        +get_active_emprunts_count() Integer
+        +can_borrow_more_books() Boolean
+        +authenticate(password) Boolean
+    }
+
+    class Categorie {
+        -String nom
+        -String description
+        -String slug
+        -Date date_creation
+        +save() Boolean
+        +get_livres_count() Integer
+    }
+
+    class Livre {
+        -Integer id
+        -String auteur
+        -String titre
+        -String isbn
+        -String slug
+        -String description
+        -Date date_publication
+        -DateTime date_ajout
+        -ImageField image_couverture
+        -Boolean actif
+        +get_total_exemplaires() Integer
+        +get_exemplaires_disponibles() Integer
+        +get_max_borrow_days() Integer
+        +is_available_for_borrow() Boolean
+        +get_absolute_url() String
+        +save() Boolean
+    }
+
+    class Exemplaire {
+        -Integer id
+        -String numero_exemplaire
+        -Boolean disponible
+        -Boolean perdu
+        -String etat
+        -DateTime date_ajout
+        -String notes
+        +is_available() Boolean
+        +mark_as_lost() void
+        +update_condition(etat) void
+    }
+
+    class Emprunter {
+        -Integer id
+        -DateTime date_demande
+        -Date date_emprunt
+        -Date date_retour_prevue
+        -Date date_retour_reel
+        -Integer duree_jours
+        -Boolean accepter
+        -String statut
+        -String notes_admin
+        -String notes_utilisateur
+        -Boolean est_retourne
+        +clean() void
+        +save() Boolean
+        +is_overdue() Boolean
+        +days_overdue() Integer
+        +calculate_fine() Decimal
+    }
+
+    class Reservation {
+        -Integer id
+        -DateTime date_reservation
+        -Boolean active
+        -Boolean notifie
+        -Integer position_queue
+        +expire_reservation() void
+        +notify_user() void
+    }
+
+    Utilisateur "1" --> "*" Emprunter : makes
+    Utilisateur "1" --> "*" Reservation : makes
+    Livre "1" --> "*" Exemplaire : has
+    Livre "*" --> "*" Categorie : belongs to
+    Livre "1" --> "*" Reservation : has
+    Exemplaire "1" --> "1" Emprunter : is borrowed as

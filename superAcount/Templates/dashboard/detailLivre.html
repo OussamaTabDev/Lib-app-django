@@ -8,7 +8,7 @@ Detail Livre
 
 
 <div class="btndash">
-  <a href="{% url 'edit_livre' livre.id %}">editer Livre    <i class="fa-solid fa-pen-to-square"></i></a>
+  <a href="{% url 'admins:edit_livre' livre.id %}">editer Livre    <i class="fa-solid fa-pen-to-square"></i></a>
 
 
  </div>
@@ -49,7 +49,7 @@ Detail Livre
 
   </h2>
   <div class="btndash">
-    <a href="{% url 'ajouter_exemplaire' livre.id %}">ajouter Exemplaire   <i class="fa-solid fa-plus"></i></a>
+    <a href="{% url 'admins:ajouter_exemplaire' livre.id %}">ajouter Exemplaire   <i class="fa-solid fa-plus"></i></a>
   
    </div>
    </div>
@@ -69,7 +69,7 @@ Detail Livre
         <!--<td>94</td>-->
         <td class="action">
           <!--<i class="fa-solid fa-pen-to-square"></i>-->
-         <a href="{% url 'supprimer_exemplaire' livre.id %}" ><i class="fa-solid fa-trash"></i></a>
+         <a href="{% url 'admins:supprimer_exemplaire' livre.id %}" ><i class="fa-solid fa-trash"></i></a>
         </td>
       </tr>
       {% endfor %}

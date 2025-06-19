@@ -30,6 +30,6 @@ urlpatterns = [
     path('notifications/clear-all/', clear_all_notifications, name='clear_all_notifications'),
     path('profile/edit-profile/', edit_profile, name='edit_profile'),
     path('return_book/<int:emprunt_id>/', return_book, name='return_book'),
-    path('/add', addnewuser, name='add_user'),
+    # path('/add', addnewuser, name='add_user'),
 
 ]

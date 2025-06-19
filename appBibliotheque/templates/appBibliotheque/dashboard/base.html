@@ -46,7 +46,7 @@
 
             <div class="flex-grow px-4 py-6 space-y-2">
                 {% with request.path as path %}
-                <a href="{% url 'library_dashboard' %}" 
+                <a href="{% url 'admins:library_dashboard' %}" 
                    class="flex items-center space-x-3 p-3 rounded-lg transition-colors
                           {% if path == '/admins/dashboard/' %}
                             bg-gray-800 text-white border-l-4 border-indigo-400
@@ -57,7 +57,7 @@
                     <span class="font-medium">Dashboard</span>
                 </a>
 
-                <a href="{% url 'empruntes_page' %}" 
+                <a href="{% url 'admins:empruntes_page' %}" 
                    class="flex items-center space-x-3 p-3 rounded-lg transition-colors
                           {% if path == '/admins/empruntes/' %}
                             bg-gray-800 text-white border-l-4 border-indigo-400
@@ -79,7 +79,7 @@
                     <span class="font-medium">Users</span>
                 </a>
 
-                <a href="{% url 'manage_borrow_requests' %}" 
+                <a href="{% url 'admins:manage_borrow_requests' %}" 
                    class="flex items-center space-x-3 p-3 rounded-lg transition-colors
                           {% if path == 'admins/requests/' %}
                             bg-gray-800 text-white border-l-4 border-indigo-400
@@ -95,7 +95,7 @@
 
                 
 
-                <a href="{% url 'book_management' %}" 
+                <a href="{% url 'admins:book_management' %}" 
                    class="flex items-center space-x-3 p-3 rounded-lg transition-colors
                           {% if path == '/admins/books/' %}
                             bg-gray-800 text-white border-l-4 border-indigo-400

@@ -8,7 +8,7 @@ Edit Livre
 
 {% block content %}
 
-<form action="{% url 'ajouter_livre' %}" method="post" enctype="multipart/form-data" >
+<form action="{% url 'admins:ajouter_livre' %}" method="post" enctype="multipart/form-data" >
   {% csrf_token %}
   <div class="inputs">
       <input name="titre" class="input" placeholder="Nom Livre" value="{{livre.titre}}" >
